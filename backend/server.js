@@ -3,6 +3,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+//routes
+const users = require('./routes/api/users');
+const profile = require('./routes/api/profile');
+const posts = require('./routes/api/posts');
+
 //variables
 const port = process.env.PORT || 4000;
 const db = require('./config/keys').mongoURI;
@@ -20,6 +25,11 @@ const app = express();
 app.get('/', (req, res) => {
 	res.send('Hellowww..!!')
 })
+
+//use routes
+app.use('/api/users', users);
+app.use('/api/profile', profile);
+app.use('/api/posts', posts);
 
 //server start function
 app.listen(port, () => {
