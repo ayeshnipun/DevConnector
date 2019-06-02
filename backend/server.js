@@ -9,7 +9,7 @@ const app = express();
 
 //test route
 app.get('/', (req, res) => {
-	res.send('Hellow..!!')
+	res.send('Hellowww..!!')
 })
 
 //server start function
