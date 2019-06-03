@@ -18,8 +18,11 @@ mongoose
 	.then(() => console.log('Database Connected'))
 	.catch(err => console.log(`Error : ${err}`))
 
-
 const app = express();
+
+//body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //test route
 app.get('/', (req, res) => {
