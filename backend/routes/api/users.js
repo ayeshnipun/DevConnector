@@ -23,7 +23,7 @@ router.post('/register', (req, res) => {
 	User.findOne({ email: req.body.email })
 		.then(user => {
 			if (user) {
-				res.status(400).json({ email: 'Email already exists'})
+				res.status(400).json({ email: 'Email already exists' })
 			} else {
 				const avatar = gravatar.url(req.body.email, {
 					s: '200', 	//Size
@@ -45,11 +45,37 @@ router.post('/register', (req, res) => {
 
 						newUser
 							.save()
-							.then(user => {res.json(user)})
+							.then(user => { res.json(user) })
 							.catch(err => console.log(err))
 					})
 				})
 			}
+		})
+})
+
+// @route 	GET /api/users/login
+// @desc 	Login user / Return token
+// @access 	Public
+router.post('/login', (req, res) => {
+	const email = req.body.email;
+	const password = req.body.password;
+
+	//find user
+	User.findOne({ email })
+		.then(user => {
+			//ckeck for user
+			if (!user) {
+				return res.status(404).json({ email: 'User not found' });
+			}
+
+			//check for password
+			bcrypt.compare(password, user.password).then(isMatch => {
+				if (!isMatch) {
+					return res.status(400).json({ password: 'Incorrect password' });
+				} else {
+					res.json({ msg: 'Success' })
+				}
+			})
 		})
 })
 
