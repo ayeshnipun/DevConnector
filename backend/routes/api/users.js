@@ -8,6 +8,7 @@ const passport = require('passport');
 
 //validation files
 const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
 
 //config files
 const keys = require('../../config/keys');
@@ -74,6 +75,14 @@ router.post('/register', (req, res) => {
 // @desc 	Login user / Return token
 // @access 	Public
 router.post('/login', (req, res) => {
+	//check input for validation errors
+	const { errors, isValid } = validateLoginInput(req.body);
+
+	//check validation
+	if (!isValid) {
+		return res.status(400).json(errors);
+	}
+
 	const email = req.body.email;
 	const password = req.body.password;
 
@@ -82,13 +91,15 @@ router.post('/login', (req, res) => {
 		.then(user => {
 			//ckeck for user
 			if (!user) {
-				return res.status(404).json({ email: 'User not found' });
+				errors.email = 'User not found'
+				return res.status(404).json(errors);
 			}
 
 			//check for password
 			bcrypt.compare(password, user.password).then(isMatch => {
 				if (!isMatch) {
-					return res.status(400).json({ password: 'Incorrect password' });
+					errors.password = 'Incorrect password';
+					return res.status(400).json(errors);
 				} else {
 					//create payload
 					const payload = { id: user.id, name: user.name, avatar: user.avatar }
