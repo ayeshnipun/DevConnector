@@ -31,7 +31,6 @@ const profileSchema = new Schema({
 	},
 	bio: {
 		type: String,
-		required: true
 	},
 	githubusername: {
 		type: String
@@ -98,23 +97,18 @@ const profileSchema = new Schema({
 	social: {
 		youtube: {
 			type: String,
-			required: true
 		},
 		twitter: {
 			type: String,
-			required: true
 		},
 		facebook: {
 			type: String,
-			required: true
 		},
 		linkedin: {
 			type: String,
-			required: true
 		},
 		instagram: {
 			type: String,
-			required: true
 		}
 	},
 	date: {
