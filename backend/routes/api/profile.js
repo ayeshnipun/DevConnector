@@ -29,6 +29,57 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
 		.catch(err => res.json(err));
 });
 
+// @route 	POST /api/profile/all
+// @desc 	Get all profiles
+// @access 	Public
+router.get('/all', (req, res) => {
+	const errors = {}
+	Profile.find()
+		.populate('user', ['name', 'avatar'])
+		.then(profiles => {
+			if (!profiles) {
+				errors.noprofile = 'There are no profiles'
+				res.status(404).json(errors)
+			}
+			res.json(profiles)
+		})
+		.catch(err => res.status(404).json({profile: 'There are no profiles'}))
+});
+
+// @route 	POST /api/profile/handle/:handle
+// @desc 	Get profile by handle
+// @access 	Public
+router.get('/handle/:handle', (req, res) => {
+	const errors = {}
+	Profile.findOne({ handle: req.params.handle })
+		.populate('user', ['name', 'avatar'])
+		.then(profile => {
+			if (!profile) {
+				errors.noprofile = 'There is no profile for this user'
+				res.status(404).json(errors)
+			}
+			res.json(profile)
+		})
+		.catch(err => res.status(404).json(err))
+});
+
+// @route 	POST /api/profile/user/:user_-d
+// @desc 	Get profile by user_id
+// @access 	Public
+router.get('/user/:user_id', (req, res) => {
+	const errors = {}
+	Profile.findOne({ user: req.params.user_id })
+		.populate('user', ['name', 'avatar'])
+		.then(profile => {
+			if (!profile) {
+				errors.noprofile = 'There is no profile for this user'
+				res.status(404).json(errors)
+			}
+			res.json(profile)
+		})
+		.catch(err => res.status(404).json({profile: 'There is no profile for this user'}))
+});
+
 // @route 	POST /api/profile
 // @desc 	Create or Edit user profile
 // @access 	Private
@@ -52,12 +103,12 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 	if (req.body.bio) profileFields.bio = req.body.bio;
 	if (req.body.status) profileFields.status = req.body.status;
 	if (req.body.githubusername) profileFields.githubusername = req.body.githubusername;
-	
+
 	//skills 
 	if (typeof req.body.skills !== 'undefined') {
 		profileFields.skills = req.body.skills.split(',');
 	}
-	
+
 	//social
 	profileFields.social = {};
 	if (req.body.youtube) profileFields.social.youtube = req.body.youtube;
@@ -65,7 +116,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 	if (req.body.facebook) profileFields.social.facebook = req.body.facebook;
 	if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
 	if (req.body.instagram) profileFields.social.instagram = req.body.instagram;
-	
+
 	Profile.findOne({ user: req.user.id })
 		.then(profile => {
 			if (profile) {
@@ -95,5 +146,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 			}
 		})
 });
+
+
 
 module.exports = router;
